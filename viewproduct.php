@@ -1,0 +1,110 @@
+<?php
+include('admin/includes/header.php');
+include('admin/includes/sidebar.php');
+include('admin/includes/topbar.php');
+include('config.php');
+
+$limit = 4;
+if(isset($_GET['page'])){
+  
+  $getpgno = $_GET['page'];
+}else{
+  $getpgno = 1;
+}
+$offset = ($getpgno - 1) * $limit;
+
+$fetch = "SELECT * from produ as p INNER JOIN user1 as u on p.id  = u.id  order by pid desc limit {$offset}, {$limit}";
+$query = mysqli_query($connection, $fetch);
+       
+    
+    
+    
+    ?>
+<div class="col-xl-10 col-lg-12 col-md-9">
+                <h2>All products </h2>
+                <hr>
+            <table class="table table-warning">
+                <thead class="bg-warning p-2 text-dark bg-opacity-10" style="opacity: 85%;">
+
+          <tr>
+           
+            <th>ID</th>
+            <th>Category</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Update</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php
+          while ($pro_data = mysqli_fetch_assoc($query)) {
+
+            ?>
+            <tr>
+              <td>
+                <?php echo $pro_data['pid'] ?>
+              </td>
+              <td>
+                <?php echo $pro_data['cname'] ?>
+              </td>
+              <td>
+                <?php echo $pro_data['pname'] ?>
+              </td>
+              <td>
+                <?php echo $pro_data['price'] ?>
+              </td>
+              <td>
+                <?php echo $pro_data['des'] ?>
+              </td>
+              <td>
+                <img src="<?php echo 'img/' . $pro_data['image'] ?>" alt="" height="50px" width="50px">
+              </td>
+              <td ><a href="#" class="btn btn-success">Update</a></td>
+              <td ><a href="#" class="btn btn-danger">Delete</a></td>
+                    
+
+              
+            </tr>
+            <?php
+          
+        }
+          ?>
+        </tbody>
+      </table>
+      <?php
+$fetchpage = "SELECT * from produ";
+$query = mysqli_query($connection, $fetchpage);
+
+  if(mysqli_num_rows($query) > 0){
+    $totalRecords = mysqli_num_rows($query);
+    $totalpages = ceil($totalRecords / $limit);
+    echo '<ul class="pagination">';
+    if($getpgno > 1){
+      echo '<li class="page-item"><a class="page-link" href="viewproduct.php?page='.($getpgno - 1).'">prev</a></li>';
+
+    }
+    for($i = 1; $i <= $totalpages; $i++){
+      $active = $i == $getpgno? "active" : "";
+      echo '<li class="'.$active.' page-item"><a class="page-link" href="viewproduct.php?page='.$i.'">'.$i.'</a></li>';
+    }
+    if($getpgno < $totalpages){
+      echo '<li class="page-item"><a class="page-link" href="viewproduct.php?page='.($getpgno + 1).'">next</a></li>';
+
+    }
+
+  }
+  ?>
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>
+
+<?php
+include('admin/includes/footer.php');
+?>
